@@ -6,7 +6,6 @@ class VehicleController {
         global $pdo;
         $data = json_decode(file_get_contents('php://input'), true);
 
-        // Check for required fields including token and camera_id
         if (!isset($data['vehicle_type'], $data['direction'], $data['count'], $data['token'], $data['camera_id'])) {
             http_response_code(400);
             echo json_encode(['error' => 'Invalid input']);
@@ -62,6 +61,112 @@ class VehicleController {
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode(['error' => $e->getMessage()]);
+        }
+    }
+
+    public static function summary() {
+        global $pdo;
+
+        $uri = $_SERVER['REQUEST_URI'];
+
+        if (preg_match('#/vehicle_count/all/(camera|gate)=(\d+)&start=([\d\-]+)&stop=([\d\-]+)#', $uri, $matches)) {
+            $type = $matches[1];
+            $id = $matches[2];
+            $start = $matches[3];
+            $stop = $matches[4];
+
+            try {
+                $data = [];
+
+                if ($type === 'gate') {
+                    // ดึงกล้องทั้งหมดใน gate นี้
+                    $stmt = $pdo->prepare("SELECT id FROM Camera WHERE gate_id = ?");
+                    $stmt->execute([$id]);
+                    $camera_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+                    if (empty($camera_ids)) {
+                        echo json_encode(['data' => []]);
+                        return;
+                    }
+
+                    $in = str_repeat('?,', count($camera_ids) - 1) . '?';
+                    $sql = "SELECT camera_id, vehicle_type_id, direction_type_id, SUM(count) as count
+                            FROM DetectionRecord
+                            WHERE camera_id IN ($in) AND time BETWEEN ? AND ?
+                            GROUP BY camera_id, vehicle_type_id, direction_type_id";
+                    $params = array_merge($camera_ids, [$start . " 00:00:00", $stop . " 23:59:59"]);
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($params);
+                    $records = $stmt->fetchAll();
+
+                    // group by camera_id
+                    $grouped = [];
+                    foreach ($records as $row) {
+                        $cid = $row['camera_id'];
+                        if (!isset($grouped[$cid])) {
+                            $grouped[$cid] = [
+                                'gate_id' => (int)$id,
+                                'camera_id' => (int)$cid,
+                                'start' => $start,
+                                'stop' => $stop,
+                                'details' => []
+                            ];
+                        }
+                        $grouped[$cid]['details'][] = [
+                            'vehicle_type_id' => (int)$row['vehicle_type_id'],
+                            'direction_type_id' => (int)$row['direction_type_id'],
+                            'count' => (int)$row['count']
+                        ];
+                    }
+
+                    // push to data array
+                    foreach ($grouped as $cam) {
+                        $data[] = $cam;
+                    }
+                    echo json_encode(['data' => $data]);
+                } else {
+                    // กรณีเป็น camera โดยตรง
+                    // ดึง gate_id ของกล้องนี้
+                    $stmt = $pdo->prepare("SELECT gate_id FROM Camera WHERE id = ?");
+                    $stmt->execute([$id]);
+                    $gate_id = $stmt->fetchColumn();
+
+                    $sql = "SELECT vehicle_type_id, direction_type_id, SUM(count) as count
+                            FROM DetectionRecord
+                            WHERE camera_id = ? AND time BETWEEN ? AND ?
+                            GROUP BY vehicle_type_id, direction_type_id";
+                    $params = [$id, $start . " 00:00:00", $stop . " 23:59:59"];
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($params);
+                    $records = $stmt->fetchAll();
+
+                    $details = [];
+                    foreach ($records as $row) {
+                        $details[] = [
+                            'vehicle_type_id' => (int)$row['vehicle_type_id'],
+                            'direction_type_id' => (int)$row['direction_type_id'],
+                            'count' => (int)$row['count']
+                        ];
+                    }
+                    $data[] = [
+                        'gate_id' => $gate_id !== false ? (int)$gate_id : null,
+                        'camera_id' => (int)$id,
+                        'start' => $start,
+                        'stop' => $stop,
+                        'details' => $details
+                    ];
+                    echo json_encode(['data' => $data]);
+                }
+
+            } catch (Exception $e) {
+                http_response_code(500);
+                echo json_encode(['error' => $e->getMessage()]);
+            }
+
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid parameters']);
+            exit;
         }
     }
 }

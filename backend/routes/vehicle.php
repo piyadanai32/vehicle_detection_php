@@ -6,7 +6,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 $routes = [
     'GET' => [
-
+        '#^/vehicle_count/all/(gate=\d+|camera=\d+)&start=[\d\-]+&stop=[\d\-]+$#' => ['VehicleController', 'summary'],
     ],
     'POST' => [
         '#^/vehicle_count/?$#' => ['VehicleController', 'store'],
