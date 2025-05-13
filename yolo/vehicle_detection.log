@@ -193,3 +193,91 @@
 2025-05-13 11:25:57,230 - vehicle_detector - INFO - Sending 10-second interval data to backend...
 2025-05-13 11:25:57,607 - vehicle_detector - INFO - Exiting program...
 2025-05-13 11:25:57,630 - vehicle_detector - INFO - Cleanup complete
+2025-05-13 15:21:26,123 - vehicle_detector - INFO - No dedicated GPU detected, using CPU
+2025-05-13 15:21:26,247 - vehicle_detector - INFO - Model loaded successfully
+2025-05-13 15:21:26,254 - vehicle_detector - INFO - Using CPU acceleration
+2025-05-13 15:21:26,348 - vehicle_detector - INFO - Video loaded successfully
+2025-05-13 15:21:34,323 - vehicle_detector - INFO - FPS: 3.78
+2025-05-13 15:21:36,444 - vehicle_detector - INFO - Sending 10-second interval data to backend...
+2025-05-13 15:21:38,184 - vehicle_detector - INFO - FPS: 5.08
+2025-05-13 15:21:41,576 - vehicle_detector - INFO - FPS: 5.92
+2025-05-13 15:21:44,315 - vehicle_detector - INFO - FPS: 6.69
+2025-05-13 15:21:45,073 - vehicle_detector - INFO - Vehicle ID 10 (motorcycle) crossed RED line - OUT
+2025-05-13 15:21:47,426 - vehicle_detector - INFO - FPS: 7.13
+2025-05-13 15:21:50,334 - vehicle_detector - INFO - FPS: 7.51
+2025-05-13 15:21:53,033 - vehicle_detector - INFO - FPS: 7.88
+2025-05-13 15:21:55,989 - vehicle_detector - INFO - FPS: 8.10
+2025-05-13 15:21:59,502 - vehicle_detector - INFO - FPS: 8.15
+2025-05-13 15:22:02,528 - vehicle_detector - INFO - FPS: 8.30
+2025-05-13 15:22:03,068 - vehicle_detector - INFO - Sending 10-second interval data to backend...
+2025-05-13 15:22:03,068 - vehicle_detector - INFO - Sending data to backend: {"vehicle_type": "motorcycle", "direction": "out", "count": 1, "token": "dajsdkasjdsuad2348werwerewfjslfj8w424", "camera_id": 1}
+2025-05-13 15:22:03,951 - vehicle_detector - INFO - Successfully sent data: motorcycle out count: 1
+2025-05-13 15:22:06,551 - vehicle_detector - INFO - FPS: 8.21
+2025-05-13 15:22:10,616 - vehicle_detector - INFO - FPS: 8.14
+2025-05-13 15:22:13,138 - vehicle_detector - INFO - Sending 10-second interval data to backend...
+2025-05-13 15:22:14,753 - vehicle_detector - INFO - FPS: 8.06
+2025-05-13 15:22:20,936 - vehicle_detector - INFO - FPS: 7.70
+2025-05-13 15:22:23,248 - vehicle_detector - INFO - Sending 10-second interval data to backend...
+2025-05-13 15:22:24,768 - vehicle_detector - INFO - Vehicle ID 15 (motorcycle) crossed RED line - OUT
+2025-05-13 15:22:24,999 - vehicle_detector - INFO - FPS: 7.68
+2025-05-13 15:22:28,065 - vehicle_detector - INFO - FPS: 7.78
+2025-05-13 15:22:30,900 - vehicle_detector - INFO - FPS: 7.90
+2025-05-13 15:22:33,688 - vehicle_detector - INFO - FPS: 8.02
+2025-05-13 15:22:36,742 - vehicle_detector - INFO - FPS: 8.10
+2025-05-13 15:22:39,647 - vehicle_detector - INFO - FPS: 8.19
+2025-05-13 15:22:42,489 - vehicle_detector - INFO - FPS: 8.28
+2025-05-13 15:22:42,937 - vehicle_detector - INFO - Sending 10-second interval data to backend...
+2025-05-13 15:22:42,938 - vehicle_detector - INFO - Sending data to backend: {"vehicle_type": "motorcycle", "direction": "out", "count": 1, "token": "dajsdkasjdsuad2348werwerewfjslfj8w424", "camera_id": 1}
+2025-05-13 15:22:43,238 - vehicle_detector - INFO - Successfully sent data: motorcycle out count: 1
+2025-05-13 15:22:45,823 - vehicle_detector - INFO - FPS: 8.31
+2025-05-13 15:22:48,727 - vehicle_detector - INFO - FPS: 8.38
+2025-05-13 15:22:51,513 - vehicle_detector - INFO - FPS: 8.46
+2025-05-13 15:22:52,951 - vehicle_detector - INFO - Sending 10-second interval data to backend...
+2025-05-13 15:22:53,125 - vehicle_detector - INFO - Vehicle ID 23 (motorcycle) crossed RED line - OUT
+2025-05-13 15:22:54,378 - vehicle_detector - INFO - FPS: 8.52
+2025-05-13 15:22:57,336 - vehicle_detector - INFO - FPS: 8.58
+2025-05-13 15:23:00,186 - vehicle_detector - INFO - FPS: 8.63
+2025-05-13 15:23:03,011 - vehicle_detector - INFO - Sending 10-second interval data to backend...
+2025-05-13 15:23:03,011 - vehicle_detector - INFO - Sending data to backend: {"vehicle_type": "motorcycle", "direction": "out", "count": 1, "token": "dajsdkasjdsuad2348werwerewfjslfj8w424", "camera_id": 1}
+2025-05-13 15:23:03,288 - vehicle_detector - INFO - Successfully sent data: motorcycle out count: 1
+2025-05-13 15:23:03,305 - vehicle_detector - INFO - FPS: 8.67
+2025-05-13 15:23:06,345 - vehicle_detector - INFO - FPS: 8.70
+2025-05-13 15:23:09,148 - vehicle_detector - INFO - Vehicle ID 28 (motorcycle) crossed RED line - OUT
+2025-05-13 15:23:09,251 - vehicle_detector - INFO - FPS: 8.75
+2025-05-13 15:23:11,986 - vehicle_detector - INFO - FPS: 8.81
+2025-05-13 15:23:14,760 - vehicle_detector - INFO - FPS: 8.86
+2025-05-13 15:23:17,911 - vehicle_detector - INFO - FPS: 8.88
+2025-05-13 15:23:20,786 - vehicle_detector - INFO - FPS: 8.92
+2025-05-13 15:23:23,602 - vehicle_detector - INFO - FPS: 8.96
+2025-05-13 15:23:26,724 - vehicle_detector - INFO - FPS: 8.97
+2025-05-13 15:23:29,631 - vehicle_detector - INFO - FPS: 9.01
+2025-05-13 15:23:32,429 - vehicle_detector - INFO - FPS: 9.04
+2025-05-13 15:23:35,381 - vehicle_detector - INFO - FPS: 9.07
+2025-05-13 15:23:38,640 - vehicle_detector - INFO - FPS: 9.07
+2025-05-13 15:23:41,461 - vehicle_detector - INFO - FPS: 9.11
+2025-05-13 15:23:44,372 - vehicle_detector - INFO - FPS: 9.13
+2025-05-13 15:23:47,596 - vehicle_detector - INFO - FPS: 9.13
+2025-05-13 15:23:50,443 - vehicle_detector - INFO - FPS: 9.16
+2025-05-13 15:23:53,532 - vehicle_detector - INFO - FPS: 9.17
+2025-05-13 15:23:56,680 - vehicle_detector - INFO - FPS: 9.18
+2025-05-13 15:23:59,540 - vehicle_detector - INFO - FPS: 9.21
+2025-05-13 15:24:02,494 - vehicle_detector - INFO - FPS: 9.22
+2025-05-13 15:24:05,337 - vehicle_detector - INFO - FPS: 9.25
+2025-05-13 15:24:08,345 - vehicle_detector - INFO - FPS: 9.26
+2025-05-13 15:24:11,252 - vehicle_detector - INFO - FPS: 9.28
+2025-05-13 15:24:14,323 - vehicle_detector - INFO - FPS: 9.29
+2025-05-13 15:24:17,633 - vehicle_detector - INFO - FPS: 9.28
+2025-05-13 15:24:20,773 - vehicle_detector - INFO - FPS: 9.29
+2025-05-13 15:24:24,135 - vehicle_detector - INFO - FPS: 9.28
+2025-05-13 15:24:27,930 - vehicle_detector - INFO - FPS: 9.25
+2025-05-13 15:24:30,900 - vehicle_detector - INFO - FPS: 9.27
+2025-05-13 15:24:33,655 - vehicle_detector - INFO - FPS: 9.29
+2025-05-13 15:24:36,678 - vehicle_detector - INFO - FPS: 9.30
+2025-05-13 15:24:39,546 - vehicle_detector - INFO - FPS: 9.32
+2025-05-13 15:24:42,130 - vehicle_detector - INFO - Sending 10-second interval data to backend...
+2025-05-13 15:24:42,131 - vehicle_detector - INFO - Sending data to backend: {"vehicle_type": "motorcycle", "direction": "out", "count": 1, "token": "dajsdkasjdsuad2348werwerewfjslfj8w424", "camera_id": 1}
+2025-05-13 15:24:42,603 - vehicle_detector - INFO - Successfully sent data: motorcycle out count: 1
+2025-05-13 15:24:42,985 - vehicle_detector - INFO - FPS: 9.31
+2025-05-13 15:24:43,076 - vehicle_detector - INFO - End of video file reached
+2025-05-13 15:24:43,077 - vehicle_detector - INFO - Exiting program...
+2025-05-13 15:24:43,104 - vehicle_detector - INFO - Cleanup complete
