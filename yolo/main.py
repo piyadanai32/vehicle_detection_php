@@ -162,12 +162,6 @@ vehicle_counts = {
     'bus': {'out': [], 'in': []}
 }
 
-# Vehicle position tracking
-vehicle_positions = {
-    'out': {},  # Tracks vehicles going out
-    'in': {}    # Tracks vehicles going in
-}
-
 # Store vehicle types by ID
 vehicle_types = {}  # {id: class_name}
 
@@ -187,9 +181,9 @@ last_sent_counts = {
 # สำหรับเก็บเวลาสุดท้ายที่ส่งข้อมูล
 last_send_time = time.time()
 
-# Add token variable
+
 token = "dajsdkasjdsuad2348werwerewfjslfj8w424"
-camera_id = 1  # เพิ่มตัวแปร camera_id
+camera_id = 1  
 
 # MODIFIED: Updated cropping function to get the bottom-right corner with custom dimensions
 def get_custom_crop(frame):
@@ -225,10 +219,8 @@ start_time = cv2.getTickCount()
 # GPU-specific batch size
 batch_size = 4 if gpu_info['backend'] in ['cuda', 'rocm'] else 1
 
-# แก้ไข URL ของ Backend API (ปรับให้เหมาะสมกับการติดตั้ง)
 BACKEND_URL = "http://localhost:8000/vehicle_count/"
 
-# แก้ไขฟังก์ชัน send_count_to_backend เพื่อให้เข้ากับ Backend API ใหม่
 def send_count_to_backend(vehicle_type, direction, count):
     """
     ส่งข้อมูลการนับยานพาหนะไปยัง backend
@@ -246,8 +238,8 @@ def send_count_to_backend(vehicle_type, direction, count):
             "vehicle_type": vehicle_type,
             "direction": direction,
             "count": count,
-            "token": token,      # Add token to payload
-            "camera_id": camera_id  # เพิ่ม camera_id ใน payload
+            "token": token,      
+            "camera_id": camera_id 
         }
         logger.info(f"Sending data to backend: {json.dumps(payload)}")
         
