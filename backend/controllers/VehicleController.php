@@ -6,8 +6,8 @@ class VehicleController {
         global $pdo;
         $data = json_decode(file_get_contents('php://input'), true);
 
-        // Check for required fields including token
-        if (!isset($data['vehicle_type'], $data['direction'], $data['count'], $data['token'])) {
+        // Check for required fields including token and camera_id
+        if (!isset($data['vehicle_type'], $data['direction'], $data['count'], $data['token'], $data['camera_id'])) {
             http_response_code(400);
             echo json_encode(['error' => 'Invalid input']);
             exit;
@@ -38,10 +38,19 @@ class VehicleController {
                 throw new Exception("Invalid or missing device token");
             }
 
-            // Insert into DetectionRecord
-            $stmt = $pdo->prepare("INSERT INTO DetectionRecord (edge_device_id, vehicle_type_id, direction_type_id, count, time) VALUES (?, ?, ?, ?, NOW())");
+            // Find camera_id (validate)
+            $cameraStmt = $pdo->prepare("SELECT id FROM Camera WHERE id = ?");
+            $cameraStmt->execute([$data['camera_id']]);
+            $camera = $cameraStmt->fetch();
+            if (!$camera) {
+                throw new Exception("Invalid camera_id: " . $data['camera_id']);
+            }
+
+            // Insert into DetectionRecord (เพิ่ม camera_id)
+            $stmt = $pdo->prepare("INSERT INTO DetectionRecord (edge_device_id, camera_id, vehicle_type_id, direction_type_id, count, time) VALUES (?, ?, ?, ?, ?, NOW())");
             $stmt->execute([
                 $device['id'],
+                $camera['id'],
                 $vehicleType['id'],
                 $directionType['id'],
                 $data['count']

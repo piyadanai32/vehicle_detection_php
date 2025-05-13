@@ -16,7 +16,6 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("vehicle_detection.log"),
         logging.StreamHandler()
     ]
 )
@@ -190,6 +189,7 @@ last_send_time = time.time()
 
 # Add token variable
 token = "dajsdkasjdsuad2348werwerewfjslfj8w424"
+camera_id = 1  # เพิ่มตัวแปร camera_id
 
 # MODIFIED: Updated cropping function to get the bottom-right corner with custom dimensions
 def get_custom_crop(frame):
@@ -246,7 +246,8 @@ def send_count_to_backend(vehicle_type, direction, count):
             "vehicle_type": vehicle_type,
             "direction": direction,
             "count": count,
-            "token": token  # Add token to payload
+            "token": token,      # Add token to payload
+            "camera_id": camera_id  # เพิ่ม camera_id ใน payload
         }
         logger.info(f"Sending data to backend: {json.dumps(payload)}")
         
