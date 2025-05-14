@@ -80,8 +80,22 @@ class VehicleController {
                 $data = [];
 
                 // ดึง vehicle_type_id และ direction_type_id ทั้งหมด
-                $vehicleTypes = $pdo->query("SELECT id FROM VehicleType")->fetchAll(PDO::FETCH_COLUMN);
-                $directionTypes = $pdo->query("SELECT id FROM DirectionType")->fetchAll(PDO::FETCH_COLUMN);
+                $vehicleTypes = $pdo->query("SELECT id, name FROM VehicleType")->fetchAll(PDO::FETCH_ASSOC);
+                $directionTypes = $pdo->query("SELECT id, name FROM DirectionType")->fetchAll(PDO::FETCH_ASSOC);
+
+                // สร้าง map สำหรับ lookup ชื่อ
+                $vehicleTypeMap = [];
+                foreach ($vehicleTypes as $vt) {
+                    $vehicleTypeMap[$vt['id']] = $vt['name'];
+                }
+                $directionTypeMap = [];
+                foreach ($directionTypes as $dt) {
+                    $directionTypeMap[$dt['id']] = $dt['name'];
+                }
+
+                // ดึงเฉพาะ id array สำหรับวนลูป
+                $vehicleTypeIds = array_column($vehicleTypes, 'id');
+                $directionTypeIds = array_column($directionTypes, 'id');
 
                 if ($type === 'gate') {
                     // ดึงกล้องทั้งหมดใน gate นี้
@@ -115,11 +129,13 @@ class VehicleController {
                             'details' => []
                         ];
                         // เตรียม details ทุก combination
-                        foreach ($vehicleTypes as $vtid) {
-                            foreach ($directionTypes as $dtid) {
+                        foreach ($vehicleTypeIds as $vtid) {
+                            foreach ($directionTypeIds as $dtid) {
                                 $grouped[$cid]['details']["$vtid-$dtid"] = [
                                     'vehicle_type_id' => (int)$vtid,
+                                    'vehicle_type_name' => $vehicleTypeMap[$vtid],
                                     'direction_type_id' => (int)$dtid,
+                                    'direction_type_name' => $directionTypeMap[$dtid],
                                     'count' => 0
                                 ];
                             }
@@ -157,11 +173,13 @@ class VehicleController {
 
                     // เตรียม details ทุก combination
                     $details = [];
-                    foreach ($vehicleTypes as $vtid) {
-                        foreach ($directionTypes as $dtid) {
+                    foreach ($vehicleTypeIds as $vtid) {
+                        foreach ($directionTypeIds as $dtid) {
                             $details["$vtid-$dtid"] = [
                                 'vehicle_type_id' => (int)$vtid,
+                                'vehicle_type_name' => $vehicleTypeMap[$vtid],
                                 'direction_type_id' => (int)$dtid,
+                                'direction_type_name' => $directionTypeMap[$dtid],
                                 'count' => 0
                             ];
                         }
