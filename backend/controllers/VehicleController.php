@@ -4,6 +4,7 @@ require_once __DIR__ . '/../config/database.php';
 class VehicleController {
     public static function store() {
         global $pdo;
+        header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
 
         if (!isset($data['vehicle_type'], $data['direction'], $data['count'], $data['token'], $data['camera_id'])) {
@@ -66,7 +67,7 @@ class VehicleController {
 
     public static function summary() {
         global $pdo;
-
+        header('Content-Type: application/json');
         $uri = $_SERVER['REQUEST_URI'];
 
         if (preg_match('#/vehicle_count/all/(camera|gate)=(\d+)&start=([\d\-]+)&stop=([\d\-]+)#', $uri, $matches)) {
@@ -77,6 +78,10 @@ class VehicleController {
 
             try {
                 $data = [];
+
+                // ดึง vehicle_type_id และ direction_type_id ทั้งหมด
+                $vehicleTypes = $pdo->query("SELECT id FROM VehicleType")->fetchAll(PDO::FETCH_COLUMN);
+                $directionTypes = $pdo->query("SELECT id FROM DirectionType")->fetchAll(PDO::FETCH_COLUMN);
 
                 if ($type === 'gate') {
                     // ดึงกล้องทั้งหมดใน gate นี้
@@ -101,26 +106,36 @@ class VehicleController {
 
                     // group by camera_id
                     $grouped = [];
+                    foreach ($camera_ids as $cid) {
+                        $grouped[$cid] = [
+                            'gate_id' => (int)$id,
+                            'camera_id' => (int)$cid,
+                            'start' => $start,
+                            'stop' => $stop,
+                            'details' => []
+                        ];
+                        // เตรียม details ทุก combination
+                        foreach ($vehicleTypes as $vtid) {
+                            foreach ($directionTypes as $dtid) {
+                                $grouped[$cid]['details']["$vtid-$dtid"] = [
+                                    'vehicle_type_id' => (int)$vtid,
+                                    'direction_type_id' => (int)$dtid,
+                                    'count' => 0
+                                ];
+                            }
+                        }
+                    }
+                    // เติมค่าจาก records
                     foreach ($records as $row) {
                         $cid = $row['camera_id'];
-                        if (!isset($grouped[$cid])) {
-                            $grouped[$cid] = [
-                                'gate_id' => (int)$id,
-                                'camera_id' => (int)$cid,
-                                'start' => $start,
-                                'stop' => $stop,
-                                'details' => []
-                            ];
-                        }
-                        $grouped[$cid]['details'][] = [
-                            'vehicle_type_id' => (int)$row['vehicle_type_id'],
-                            'direction_type_id' => (int)$row['direction_type_id'],
-                            'count' => (int)$row['count']
-                        ];
+                        $vtid = $row['vehicle_type_id'];
+                        $dtid = $row['direction_type_id'];
+                        $grouped[$cid]['details']["$vtid-$dtid"]['count'] = (int)$row['count'];
                     }
-
                     // push to data array
                     foreach ($grouped as $cam) {
+                        // details เป็น array ไม่ใช่ associative
+                        $cam['details'] = array_values($cam['details']);
                         $data[] = $cam;
                     }
                     echo json_encode(['data' => $data]);
@@ -140,20 +155,29 @@ class VehicleController {
                     $stmt->execute($params);
                     $records = $stmt->fetchAll();
 
+                    // เตรียม details ทุก combination
                     $details = [];
+                    foreach ($vehicleTypes as $vtid) {
+                        foreach ($directionTypes as $dtid) {
+                            $details["$vtid-$dtid"] = [
+                                'vehicle_type_id' => (int)$vtid,
+                                'direction_type_id' => (int)$dtid,
+                                'count' => 0
+                            ];
+                        }
+                    }
+                    // เติมค่าจาก records
                     foreach ($records as $row) {
-                        $details[] = [
-                            'vehicle_type_id' => (int)$row['vehicle_type_id'],
-                            'direction_type_id' => (int)$row['direction_type_id'],
-                            'count' => (int)$row['count']
-                        ];
+                        $vtid = $row['vehicle_type_id'];
+                        $dtid = $row['direction_type_id'];
+                        $details["$vtid-$dtid"]['count'] = (int)$row['count'];
                     }
                     $data[] = [
                         'gate_id' => $gate_id !== false ? (int)$gate_id : null,
                         'camera_id' => (int)$id,
                         'start' => $start,
                         'stop' => $stop,
-                        'details' => $details
+                        'details' => array_values($details)
                     ];
                     echo json_encode(['data' => $data]);
                 }
