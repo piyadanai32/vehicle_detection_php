@@ -3,7 +3,7 @@ require_once __DIR__ . '/../config/database.php';
 
 class VehicleController {
     public static function store() {
-        global $pdo;
+        global $connectDB;
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
 
@@ -15,7 +15,7 @@ class VehicleController {
 
         try {
             // Find vehicle_type_id
-            $vehicleTypeStmt = $pdo->prepare("SELECT id FROM VehicleType WHERE name = ?");
+            $vehicleTypeStmt = $connectDB->prepare("SELECT id FROM VehicleType WHERE name = ?");
             $vehicleTypeStmt->execute([$data['vehicle_type']]);
             $vehicleType = $vehicleTypeStmt->fetch();
             if (!$vehicleType) {
@@ -23,7 +23,7 @@ class VehicleController {
             }
 
             // Find direction_type_id
-            $directionTypeStmt = $pdo->prepare("SELECT id FROM DirectionType WHERE name = ?");
+            $directionTypeStmt = $connectDB->prepare("SELECT id FROM DirectionType WHERE name = ?");
             $directionTypeStmt->execute([$data['direction']]);
             $directionType = $directionTypeStmt->fetch();
             if (!$directionType) {
@@ -31,7 +31,7 @@ class VehicleController {
             }
 
             // Find edge_device_id by token
-            $deviceStmt = $pdo->prepare("SELECT id FROM EdgeDevice WHERE token = ?");
+            $deviceStmt = $connectDB->prepare("SELECT id FROM EdgeDevice WHERE token = ?");
             $deviceStmt->execute([$data['token']]);
             $device = $deviceStmt->fetch();
             if (!$device) {
@@ -39,7 +39,7 @@ class VehicleController {
             }
 
             // Find camera_id (validate)
-            $cameraStmt = $pdo->prepare("SELECT id FROM Camera WHERE id = ?");
+            $cameraStmt = $connectDB->prepare("SELECT id FROM Camera WHERE id = ?");
             $cameraStmt->execute([$data['camera_id']]);
             $camera = $cameraStmt->fetch();
             if (!$camera) {
@@ -47,7 +47,7 @@ class VehicleController {
             }
 
             // Insert into DetectionRecord (เพิ่ม camera_id)
-            $stmt = $pdo->prepare("INSERT INTO DetectionRecord (edge_device_id, camera_id, vehicle_type_id, direction_type_id, count, time) VALUES (?, ?, ?, ?, ?, NOW())");
+            $stmt = $connectDB->prepare("INSERT INTO DetectionRecord (edge_device_id, camera_id, vehicle_type_id, direction_type_id, count, time) VALUES (?, ?, ?, ?, ?, NOW())");
             $stmt->execute([
                 $device['id'],
                 $camera['id'],
@@ -66,7 +66,7 @@ class VehicleController {
     }
 
     public static function summary() {
-        global $pdo;
+        global $connectDB;
         header('Content-Type: application/json');
         $uri = $_SERVER['REQUEST_URI'];
 
@@ -80,8 +80,8 @@ class VehicleController {
                 $data = [];
 
                 // ดึง vehicle_type_id และ direction_type_id ทั้งหมด
-                $vehicleTypes = $pdo->query("SELECT id, name FROM VehicleType")->fetchAll(PDO::FETCH_ASSOC);
-                $directionTypes = $pdo->query("SELECT id, name FROM DirectionType")->fetchAll(PDO::FETCH_ASSOC);
+                $vehicleTypes = $connectDB->query("SELECT id, name FROM VehicleType")->fetchAll(PDO::FETCH_ASSOC);
+                $directionTypes = $connectDB->query("SELECT id, name FROM DirectionType")->fetchAll(PDO::FETCH_ASSOC);
 
                 // สร้าง map สำหรับ lookup ชื่อ
                 $vehicleTypeMap = [];
@@ -99,7 +99,7 @@ class VehicleController {
 
                 if ($type === 'gate') {
                     // ดึงกล้องทั้งหมดใน gate นี้
-                    $stmt = $pdo->prepare("SELECT id FROM Camera WHERE gate_id = ?");
+                    $stmt = $connectDB->prepare("SELECT id FROM Camera WHERE gate_id = ?");
                     $stmt->execute([$id]);
                     $camera_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
@@ -114,7 +114,7 @@ class VehicleController {
                             WHERE camera_id IN ($in) AND time BETWEEN ? AND ?
                             GROUP BY camera_id, vehicle_type_id, direction_type_id";
                     $params = array_merge($camera_ids, [$start . " 00:00:00", $stop . " 23:59:59"]);
-                    $stmt = $pdo->prepare($sql);
+                    $stmt = $connectDB->prepare($sql);
                     $stmt->execute($params);
                     $records = $stmt->fetchAll();
 
@@ -158,7 +158,7 @@ class VehicleController {
                 } else {
                     // กรณีเป็น camera โดยตรง
                     // ดึง gate_id ของกล้องนี้
-                    $stmt = $pdo->prepare("SELECT gate_id FROM Camera WHERE id = ?");
+                    $stmt = $connectDB->prepare("SELECT gate_id FROM Camera WHERE id = ?");
                     $stmt->execute([$id]);
                     $gate_id = $stmt->fetchColumn();
 
@@ -167,7 +167,7 @@ class VehicleController {
                             WHERE camera_id = ? AND time BETWEEN ? AND ?
                             GROUP BY vehicle_type_id, direction_type_id";
                     $params = [$id, $start . " 00:00:00", $stop . " 23:59:59"];
-                    $stmt = $pdo->prepare($sql);
+                    $stmt = $connectDB->prepare($sql);
                     $stmt->execute($params);
                     $records = $stmt->fetchAll();
 
@@ -213,11 +213,11 @@ class VehicleController {
     }
 
     public static function getAllDetectionRecord() {
-        global $pdo;
+        global $connectDB;
         header('Content-Type: application/json');
         try {
             $sql = "SELECT * FROM DetectionRecord";
-            $stmt = $pdo->query($sql);
+            $stmt = $connectDB->query($sql);
             $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['data' => $records]);
         } catch (Exception $e) {
